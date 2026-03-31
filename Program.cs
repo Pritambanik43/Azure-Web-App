@@ -11,17 +11,10 @@ string connectionString = "Server=tcp:sqltstsvr.database.windows.net,1433;Initia
 
 app.MapGet("/", () =>
 {
-    try
+    using (SqlConnection conn = new SqlConnection(connectionString))
     {
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-            conn.Open();
-            return "✅ Connected to Azure SQL Database!";
-        }
-    }
-    catch (Exception ex)
-    {
-        return "❌ DB Connection Failed: " + ex.Message;
+        conn.Open();
+        return "Connected + DB is LIVE 🚀";
     }
 });
 
