@@ -1,33 +1,31 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using System.Data.SqlClient;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-// 🔴 ADD YOUR CONNECTION STRING HERE
-string connectionString = "Server=tcp:sqltstsvr.database.windows.net,1433;Initial Catalog=free-sql-db-8744471;User ID=CloudSA76893420;Password=Pritam@1234;Encrypt=True;";
+// 👉 IMPORTANT: Paste your connection string here
+string connectionString = "Server=tcp:sqltstsvr.database.windows.net,1433;Initial Catalog=free-sql-db-8744471;User ID=CloudSA76893420;Password=Pritam@1234;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-app.MapGet("/", async () =>
+app.MapGet("/", () =>
 {
-    var html = new StringBuilder();
-    html.Append("<h1>Employee List</h1><table border='1'><tr><th>ID</th><th>Name</th><th>Role</th></tr>");
+    string result = "Connected successfully! 🎉\n";
 
-    using (SqlConnection conn = new SqlConnection(connectionString))
+    try
     {
-        await conn.OpenAsync();
-        var cmd = new SqlCommand("SELECT * FROM Employees", conn);
-        var reader = await cmd.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
+        using (SqlConnection conn = new SqlConnection(connectionString))
         {
-            html.Append($"<tr><td>{reader["Id"]}</td><td>{reader["Name"]}</td><td>{reader["Role"]}</td></tr>");
+            conn.Open();
+            result += "Database connection OK ✅";
         }
     }
+    catch (Exception ex)
+    {
+        result += "Error: " + ex.Message;
+    }
 
-    html.Append("</table>");
-    return html.ToString();
+    return result;
 });
 
 app.Run();
