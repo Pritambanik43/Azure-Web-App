@@ -33,7 +33,7 @@ app.MapGet("/", () =>
             </style>
         </head>
         <body>
-            <h1>🚀 User Dashboard</h1>
+            <h1>🚀 Student Dashboard</h1>
 
             <form method='post' action='/add'>
                 <input type='text' name='name' placeholder='Enter name' required />
@@ -42,12 +42,16 @@ app.MapGet("/", () =>
 
             <h2>Users</h2>
             <table>
-                <tr><th>ID</th><th>Name</th><th>Course</th></tr>;
+                <tr><th>ID</th><th>Name</th><th>Course</th></tr>";
         
         while (reader.Read())
-        {
-            html += $"<tr><td>{reader["StudentID"]}</td><td>{reader["Name"]}</td><td>{reader["Course"]}</td></tr>";
-        }
+{
+    html += "<tr>" +
+            "<td>" + reader["StudentID"] + "</td>" +
+            "<td>" + reader["Name"] + "</td>" +
+            "<td>" + reader["Course"] + "</td>" +
+            "</tr>";
+}
 
         html += @"
             </table>
