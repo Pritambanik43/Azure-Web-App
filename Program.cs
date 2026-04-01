@@ -21,49 +21,108 @@ app.MapGet("/", () =>
         SqlDataReader reader = cmd.ExecuteReader();
 
         string html = @"
-        <html>
-        <head>
-            <title>User Dashboard</title>
-            <style>
-                body { font-family: Arial; padding:20px; background:#f4f4f4; }
-                table { border-collapse: collapse; width: 50%; background:white; }
-                th, td { border:1px solid #ccc; padding:10px; text-align:left; }
-                th { background:#eee; }
-                input, button { padding:8px; margin-top:10px; }
-            </style>
-        </head>
-        <body>
-            <h1>🚀 Student Dashboard</h1>
+<html>
+<head>
+    <title>Student Dashboard</title>
 
-            <form method='post' action='/add'>
-    <input type='text' name='name' placeholder='Enter name' required />
-    <input type='number' name='age' placeholder='Enter age' required />
-    <input type='text' name='course' placeholder='Enter course' required />
-    <button type='submit'>Add User</button>
+    <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
+
+</head>
+<body class='bg-light'>
+
+<div class='container mt-5'>
+
+<h1 class='mb-4'>🚀 Student Dashboard</h1>
+
+<form method='post' action='/add' class='row g-2 mb-4'>
+    <div class='col-md-3'>
+        <input type='text' name='name' class='form-control' placeholder='Name' required />
+    </div>
+    <div class='col-md-2'>
+        <input type='number' name='age' class='form-control' placeholder='Age' required />
+    </div>
+    <div class='col-md-3'>
+        <input type='text' name='course' class='form-control' placeholder='Course' required />
+    </div>
+    <div class='col-md-2'>
+        <button type='submit' class='btn btn-success'>Add</button>
+    </div>
 </form>
 
-            <h2>Users</h2>
-            <table>
-                <tr><th>ID</th><th>Name</th><th>Course</th></tr>";
+<input type='text' id='search' class='form-control mb-3' placeholder='Search...' onkeyup='filterTable()' />
+
+<table class='table table-bordered table-striped' id='studentTable'>
+<thead class='table-dark'>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Course</th>
+    <th>Actions</th>
+</tr>
+</thead>
+<tbody>";
         
         while (reader.Read())
 {
-    html += "<tr>" +
-            "<td>" + reader["StudentID"] + "</td>" +
-            "<td>" + reader["Name"] + "</td>" +
-            "<td>" + reader["Course"] + "</td>" +
-            "</tr>";
+    html += $@"
+<tr>
+    <td>{reader["StudentID"]}</td>
+    <td>{reader["Name"]}</td>
+    <td>{reader["Course"]}</td>
+    <td>
+        <a href='/delete/{reader["StudentID"]}' class='btn btn-danger btn-sm'>Delete</a>
+    </td>
+</tr>";
 }
 
         html += @"
-            </table>
-        </body>
-        </html>";
+</tbody>
+</table>
+</div>
+
+<script>
+function filterTable() {
+    let input = document.getElementById('search').value.toLowerCase();
+    let rows = document.querySelectorAll('#studentTable tbody tr');
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
+    });
+}
+</script>
+
+</body>
+</html>";
 
         return Results.Content(html, "text/html; charset=utf-8");
     }
 });
 
+app.MapPost("/add", async (HttpRequest request) =>
+{
+    var form = await request.ReadFormAsync();
+
+    string name = form["name"];
+    int age = int.Parse(form["age"]);
+    string course = form["course"];
+
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        conn.Open();
+
+        SqlCommand cmd = new SqlCommand(
+            "INSERT INTO Students (Name, Age, Course) VALUES (@name, @age, @course)", conn);
+
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@age", age);
+        cmd.Parameters.AddWithValue("@course", course);
+
+        cmd.ExecuteNonQuery();
+    }
+
+    return Results.Redirect("/");
+});
 app.MapPost("/add", async (HttpRequest request) =>
 {
     var form = await request.ReadFormAsync();
