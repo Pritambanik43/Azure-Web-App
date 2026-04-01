@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Data.SqlClient;   // ✅ FIXED
 using System;                     // ✅ FIXED
@@ -15,7 +16,7 @@ app.MapGet("/", () =>
     {
         conn.Open();
 
-        SqlCommand cmd = new SqlCommand("SELECT Id, Name FROM Students", conn);
+        SqlCommand cmd = new SqlCommand("SELECT Course, Name FROM Students", conn);
         SqlDataReader reader = cmd.ExecuteReader();
 
         string html = @"
@@ -54,6 +55,23 @@ app.MapGet("/", () =>
 
         return Results.Content(html, "text/html");
     }
+});
+
+app.MapPost("/add", async (HttpRequest request) =>
+{
+    var form = await request.ReadFormAsync();
+    string name = form["name"];
+
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        conn.Open();
+
+        SqlCommand cmd = new SqlCommand("INSERT INTO Users (Name) VALUES (@name)", conn);
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.ExecuteNonQuery();
+    }
+
+    return Results.Redirect("/");
 });
 
 app.Run();
