@@ -123,5 +123,21 @@ app.MapPost("/add", async (HttpRequest request) =>
 
     return Results.Redirect("/");
 });
+app.MapGet("/delete/{id}", (int id) =>
+{
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        conn.Open();
+
+        SqlCommand cmd = new SqlCommand(
+            "DELETE FROM Students WHERE StudentID=@id", conn);
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        cmd.ExecuteNonQuery();
+    }
+
+    return Results.Redirect("/");
+});
 
 app.Run();
