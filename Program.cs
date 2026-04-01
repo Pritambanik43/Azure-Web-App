@@ -123,28 +123,5 @@ app.MapPost("/add", async (HttpRequest request) =>
 
     return Results.Redirect("/");
 });
-app.MapPost("/add", async (HttpRequest request) =>
-{
-    var form = await request.ReadFormAsync();
 
-    string name = form["name"];
-    int age = int.Parse(form["age"]);
-    string course = form["course"];
-
-    using (SqlConnection conn = new SqlConnection(connectionString))
-    {
-        conn.Open();
-
-        SqlCommand cmd = new SqlCommand(
-            "INSERT INTO Students (Name, Age, Course) VALUES (@name, @age, @course)", conn);
-
-        cmd.Parameters.AddWithValue("@name", name);
-        cmd.Parameters.AddWithValue("@age", age);
-        cmd.Parameters.AddWithValue("@course", course);
-
-        cmd.ExecuteNonQuery();
-    }
-
-    return Results.Redirect("/");
-});
 app.Run();
