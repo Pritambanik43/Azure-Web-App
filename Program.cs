@@ -36,9 +36,11 @@ app.MapGet("/", () =>
             <h1>🚀 Student Dashboard</h1>
 
             <form method='post' action='/add'>
-                <input type='text' name='name' placeholder='Enter name' required />
-                <button type='submit'>Add User</button>
-            </form>
+    <input type='text' name='name' placeholder='Enter name' required />
+    <input type='number' name='age' placeholder='Enter age' required />
+    <input type='text' name='course' placeholder='Enter course' required />
+    <button type='submit'>Add User</button>
+</form>
 
             <h2>Users</h2>
             <table>
@@ -64,32 +66,26 @@ app.MapGet("/", () =>
 
 app.MapPost("/add", async (HttpRequest request) =>
 {
-    try
+    var form = await request.ReadFormAsync();
+
+    string name = form["name"];
+    int age = int.Parse(form["age"]);
+    string course = form["course"];
+
+    using (SqlConnection conn = new SqlConnection(connectionString))
     {
-        var form = await request.ReadFormAsync();
-        string name = form["name"];
+        conn.Open();
 
-        if (string.IsNullOrEmpty(name))
-        {
-            return Results.Content("❌ Name is empty");
-        }
+        SqlCommand cmd = new SqlCommand(
+            "INSERT INTO Students (Name, Age, Course) VALUES (@name, @age, @course)", conn);
 
-        using (SqlConnection conn = new SqlConnection(connectionString))
-        {
-            conn.Open();
+        cmd.Parameters.AddWithValue("@name", name);
+        cmd.Parameters.AddWithValue("@age", age);
+        cmd.Parameters.AddWithValue("@course", course);
 
-            SqlCommand cmd = new SqlCommand(
-                "INSERT INTO Students (Name, Age, Course) VALUES (@name, 20, 'General')", conn);
-
-            cmd.Parameters.AddWithValue("@name", name);
-            cmd.ExecuteNonQuery();
-        }
-
-        return Results.Redirect("/");
+        cmd.ExecuteNonQuery();
     }
-    catch (Exception ex)
-    {
-        return Results.Content("<h2>ERROR:</h2><p>" + ex.Message + "</p>", "text/html");
-    }
+
+    return Results.Redirect("/");
 });
 app.Run();
