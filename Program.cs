@@ -72,7 +72,7 @@ app.MapGet("/", () =>
     <td>
         <a href='/delete/{reader["StudentID"]}' 
    class='btn btn-danger btn-sm'
-   onclick='return confirm("Are you sure?")'>
+   onclick='return confirm(""Are you sure?"")'>
    Delete
 </a>
     </td>
