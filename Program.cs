@@ -64,19 +64,32 @@ app.MapGet("/", () =>
 
 app.MapPost("/add", async (HttpRequest request) =>
 {
-    var form = await request.ReadFormAsync();
-    string name = form["name"];
-
-    using (SqlConnection conn = new SqlConnection(connectionString))
+    try
     {
-        conn.Open();
+        var form = await request.ReadFormAsync();
+        string name = form["name"];
 
-        SqlCommand cmd = new SqlCommand("INSERT INTO Students (Name, Age, Course) VALUES (@name, 20, 'General')", conn);
-        cmd.Parameters.AddWithValue("@name", name);
-        cmd.ExecuteNonQuery();
+        if (string.IsNullOrEmpty(name))
+        {
+            return Results.Content("❌ Name is empty");
+        }
+
+        using (SqlConnection conn = new SqlConnection(connectionString))
+        {
+            conn.Open();
+
+            SqlCommand cmd = new SqlCommand(
+                "INSERT INTO Students (Name, Age, Course) VALUES (@name, 20, 'General')", conn);
+
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.ExecuteNonQuery();
+        }
+
+        return Results.Redirect("/");
     }
-
-    return Results.Redirect("/");
+    catch (Exception ex)
+    {
+        return Results.Content("<h2>ERROR:</h2><p>" + ex.Message + "</p>", "text/html");
+    }
 });
-
 app.Run();
