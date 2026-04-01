@@ -46,7 +46,7 @@ app.MapGet("/", () =>
         
         while (reader.Read())
         {
-            html += $"<tr><td>{reader["Id"]}</td><td>{reader["Name"]}</td></tr>";
+            html += $"<tr><td>{reader["Course"]}</td><td>{reader["Name"]}</td></tr>";
         }
 
         html += @"
