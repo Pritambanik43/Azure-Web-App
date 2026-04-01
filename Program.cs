@@ -54,7 +54,7 @@ app.MapGet("/", () =>
         </body>
         </html>";
 
-        return Results.Content(html, "text/html");
+        return Results.Content(html, "text/html; charset=utf-8");
     }
 });
 
