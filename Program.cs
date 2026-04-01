@@ -17,7 +17,7 @@ app.MapGet("/", () =>
     {
         conn.Open();
 
-        SqlCommand cmd = new SqlCommand("SELECT Course, Name FROM Students", conn);
+        SqlCommand cmd = new SqlCommand("SELECT StudentID, Name, Course FROM Students", conn);
         SqlDataReader reader = cmd.ExecuteReader();
 
         string html = @"
@@ -42,11 +42,11 @@ app.MapGet("/", () =>
 
             <h2>Users</h2>
             <table>
-                <tr><th>ID</th><th>Name</th></tr>";
+                <tr><th>ID</th><th>Name</th><th>Course</th></tr>;
         
         while (reader.Read())
         {
-            html += $"<tr><td>{reader["Course"]}</td><td>{reader["Name"]}</td></tr>";
+            html += $"<tr><td>{reader["StudentID"]}</td><td>{reader["Name"]}</td><td>{reader["Course"]}</td></tr>";
         }
 
         html += @"
@@ -67,7 +67,7 @@ app.MapPost("/add", async (HttpRequest request) =>
     {
         conn.Open();
 
-        SqlCommand cmd = new SqlCommand("INSERT INTO Users (Name) VALUES (@name)", conn);
+        SqlCommand cmd = new SqlCommand("INSERT INTO Students (Name, Age, Course) VALUES (@name, 20, 'General')", conn);
         cmd.Parameters.AddWithValue("@name", name);
         cmd.ExecuteNonQuery();
     }
