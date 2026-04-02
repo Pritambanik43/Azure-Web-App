@@ -6,10 +6,10 @@ using Microsoft.Data.SqlClient;   // ✅ FIXED
 using System;                     // ✅ FIXED
 
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
 
-// 🔥 Your connection string (PASTE YOURS HERE)
-string connectionString = "Server=tcp:sqltstsvr.database.windows.net,1433;Initial Catalog=free-sql-db-8744471;Persist Security Info=False;User ID=CloudSA76893420;Password=Pritam@0926;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+// ✅ ADD THIS LINE HERE (after builder, before app)
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var app = builder.Build();
 
 app.MapGet("/", () =>
 {
