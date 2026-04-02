@@ -23,7 +23,7 @@ app.MapGet("/", () =>
         string html = @"
 <html>
 <head>
-    <title>Student Dashboard</title>
+    <title> Welcome To Student Dashboard</title>
 
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
 
@@ -32,7 +32,7 @@ app.MapGet("/", () =>
 
 <div class='container mt-5'>
 
-<h1 class='mb-4'>🚀 Student Dashboard</h1>
+<h1 class='mb-4'>🚀 Welcome To Student Dashboard</h1>
 
 <form method='post' action='/add' class='row g-2 mb-4'>
     <div class='col-md-3'>
