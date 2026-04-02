@@ -9,14 +9,21 @@ using System;                     // ✅ FIXED
 var builder = WebApplication.CreateBuilder(args);
 
 // ✅ ADD THIS LINE HERE (after builder, before app)
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString = "Server=tcp:sqltstsvr.database.windows.net,1433;Initial Catalog=free-sql-db-8744471;Persist Security Info=False;User ID=CloudSA76893420;Password=Pritam@0926;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 var app = builder.Build();
 
 app.MapGet("/", () =>
 {
     using (SqlConnection conn = new SqlConnection(connectionString))
     {
-        conn.Open();
+        try
+{
+    conn.Open();
+}
+catch (Exception ex)
+{
+    return Results.Content("DB ERROR: " + ex.Message);
+}
 
         SqlCommand cmd = new SqlCommand("SELECT StudentID, Name, Course FROM Students", conn);
         SqlDataReader reader = cmd.ExecuteReader();
